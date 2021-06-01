@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Entites;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Dota.Data
 {
@@ -12,5 +10,7 @@ namespace Dota.Data
             : base(options)
         {
         }
+        public DbSet<Hero> Heroes { get; set; }
+        public DbSet<Item> Items { get; set; }
     }
 }
