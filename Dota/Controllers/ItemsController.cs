@@ -66,15 +66,16 @@ namespace Dota.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Item item)
+        public async Task<IActionResult> Create(ItemsVM itemsVM)
         {
             if (ModelState.IsValid)
             {
+                var item = _mapper.Map<ItemsVM, Item>(itemsVM);
                 _context.Add(item);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(item);
+            return View(itemsVM);
         }
 
 
