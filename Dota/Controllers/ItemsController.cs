@@ -44,14 +44,17 @@ namespace Dota.Controllers
                 return NotFound();
             }
 
-            var item = await _context.Items
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var item = await _context.Items.FirstOrDefaultAsync(m => m.Id == id);               
+
             if (item == null)
             {
                 return NotFound();
             }
 
-            return View(item);
+            var itemVM = _mapper.Map<Item, ItemsVM>(item);
+            
+
+            return View(itemVM);
         }
 
 
@@ -63,7 +66,7 @@ namespace Dota.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name")] Item item)
+        public async Task<IActionResult> Create(Item item)
         {
             if (ModelState.IsValid)
             {
@@ -87,15 +90,16 @@ namespace Dota.Controllers
             {
                 return NotFound();
             }
-            return View(item);
+            var itemsVM = _mapper.Map<Item, ItemsVM>(item);
+            return View(itemsVM);
         }
 
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Item item)
+        public async Task<IActionResult> Edit(int id,ItemsVM itemsVM)
         {
-            if (id != item.Id)
+            if (id != itemsVM.Id)
             {
                 return NotFound();
             }
@@ -104,12 +108,13 @@ namespace Dota.Controllers
             {
                 try
                 {
+                    var item = _mapper.Map<ItemsVM, Item>(itemsVM);
                     _context.Update(item);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ItemExists(item.Id))
+                    if (!ItemExists(itemsVM.Id))
                     {
                         return NotFound();
                     }
@@ -120,7 +125,7 @@ namespace Dota.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(item);
+            return View(itemsVM);
         }
 
 

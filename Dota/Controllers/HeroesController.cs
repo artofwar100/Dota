@@ -44,14 +44,17 @@ namespace Dota.Controllers
                 return NotFound();
             }
 
-            var hero = await _context.Heroes
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var hero = await _context.Heroes.FirstOrDefaultAsync(m => m.Id == id);
+
             if (hero == null)
             {
                 return NotFound();
             }
 
-            return View(hero);
+            var heroVM = _mapper.Map<Hero, HeroesVM>(hero);
+            
+
+            return View(heroVM);
         }
 
 
@@ -63,15 +66,16 @@ namespace Dota.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name")] Hero hero)
+        public async Task<IActionResult> Create(HeroesVM heroesVM)
         {
             if (ModelState.IsValid)
             {
+                var hero = _mapper.Map<HeroesVM, Hero>(heroesVM);
                 _context.Add(hero);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(hero);
+            return View(heroesVM);
         }
 
 
@@ -83,19 +87,22 @@ namespace Dota.Controllers
             }
 
             var hero = await _context.Heroes.FindAsync(id);
+
             if (hero == null)
             {
                 return NotFound();
             }
-            return View(hero);
+            var heroesVM = _mapper.Map<Hero, HeroesVM>(hero);
+
+            return View(heroesVM);
         }
 
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Hero hero)
+        public async Task<IActionResult> Edit(int id,HeroesVM heroesVM)
         {
-            if (id != hero.Id)
+            if (id != heroesVM.Id)
             {
                 return NotFound();
             }
@@ -104,12 +111,13 @@ namespace Dota.Controllers
             {
                 try
                 {
+                    var hero = _mapper.Map<HeroesVM, Hero>(heroesVM);
                     _context.Update(hero);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!HeroExists(hero.Id))
+                    if (!HeroExists(heroesVM.Id))
                     {
                         return NotFound();
                     }
@@ -120,7 +128,7 @@ namespace Dota.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(hero);
+            return View(heroesVM);
         }
 
 
