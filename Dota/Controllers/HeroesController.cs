@@ -29,7 +29,10 @@ namespace Dota.Controllers
         #region Actions
         public async Task<IActionResult> Index()
         {
-            var heroes = await _context.Heroes.ToListAsync();
+            var heroes = await _context
+                                       .Heroes
+                                       .Include(heroes => heroes.Items)
+                                       .ToListAsync();
 
             var herosVM = _mapper.Map<List<Hero>, List<HeroesVM>>(heroes);
 
